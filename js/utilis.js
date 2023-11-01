@@ -1,14 +1,15 @@
 // initializing firebase
 
-// Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-import "firebase/auth"; // Import other Firebase services as needed
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.4.0/firebase-app.js";
 import {
   getAuth,
   createUserWithEmailAndPassword,
   GoogleAuthProvider,
   signInWithPopup,
-} from "firebase/auth";
+  FacebookAuthProvider
+} from "https://www.gstatic.com/firebasejs/9.4.0/firebase-auth.js"
+
+// Import the functions you need from the SDKs you need
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -19,16 +20,15 @@ const firebaseConfig = {
   projectId: "auth-app-6f78a",
   storageBucket: "auth-app-6f78a.appspot.com",
   messagingSenderId: "752533148797",
-  appId: "1:752533148797:web:a3d4ede611558a64248d14",
+  appId: "1:752533148797:web:a3d4ede611558a64248d14"
 };
 
 // Initialize Firebase
-export const app = initializeApp(firebaseConfig);
-
+const app = initializeApp(firebaseConfig);
 const auth = getAuth();
 
+// SignUp with Google
 // Sign Up with email and password
-
 export async function createUserWithEmailAndPass(email, password) {
   if (!email || !password) {
     console.error("Email and password are required.");
@@ -46,40 +46,58 @@ export async function createUserWithEmailAndPass(email, password) {
     return user;
   } catch (error) {
     const errorMessage = error.message;
-    console.log(errorMessage);
-    errorMessage === "Firebase: Error (auth/email-already-in-use)."
-      ? alert("Account Already exists. Try signing In.")
-      : alert(errorMessage);
+    if (errorMessage === "Firebase: Error (auth/email-already-in-use).") {
+      alert("Account already exists. Try signing in.");
+    } else {
+      alert(errorMessage);
+    }
   }
 }
 
-// SignUp with Google
-
+// Sign Up with Google
 const googleProvider = new GoogleAuthProvider();
 
-export async function signInWithGooglePopUp() {
-  signInWithPopup(auth, googleProvider)
-    .then(result => {
-      // This gives you a Google Access Token. You can use it to access the Google API.
-      const credential = GoogleAuthProvider.credentialFromResult(result);
-      const token = credential.accessToken;
-      // The signed-in user info.
+export async function signInWithGooglePopup() {
+  try {
+    const result = await signInWithPopup(auth, googleProvider);
+    const user = result.user;
+    // You can access user data here, e.g., user.displayName, user.email, etc.
+    alert('you have signed in through google ' + result.user.email)
+    return user;
+  } catch (error) {
+    const errorCode = error.code;
+    const errorMessage = error.message;
+    console.log(errorCode, errorMessage);
+    console.log(error)
+  }
+}
+
+// SignIn with facebook 
+
+const facebookProvider = new FacebookAuthProvider();
+
+export async function signInWithFacebookPopUp() {
+  
+  signInWithPopup(auth, facebookProvider)
+    .then((result) => {
       const user = result.user;
+  
+      const credential = FacebookAuthProvider.credentialFromResult(result);
+      const accessToken = credential.accessToken;
+      // alert('you have signed in through facebook ' + result.user.email)
       return user;
-      // IdP data available using getAdditionalUserInfo(result)
-      // ...
+  
     })
-    .catch(error => {
-      // Handle Errors here.
+    .catch((error) => {
+      // Handling Errors here.
       const errorCode = error.code;
       const errorMessage = error.message;
       // The email of the user's account used.
       const email = error.customData.email;
-      // The AuthCredential type that was used.
-      const credential = GoogleAuthProvider.credentialFromError(error);
-      console.log(errorCode);
-      console.log(email);
-
+      
+      email ? alert(`${email} already is use or signedIn`) : alert(errorMessage);
+  
       // ...
     });
+
 }
