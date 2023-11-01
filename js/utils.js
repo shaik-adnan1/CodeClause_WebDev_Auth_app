@@ -6,7 +6,8 @@ import {
   createUserWithEmailAndPassword,
   GoogleAuthProvider,
   signInWithPopup,
-  FacebookAuthProvider
+  FacebookAuthProvider,
+  GithubAuthProvider
 } from "https://www.gstatic.com/firebasejs/9.4.0/firebase-auth.js"
 
 // Import the functions you need from the SDKs you need
@@ -84,7 +85,7 @@ export async function signInWithFacebookPopUp() {
   
       const credential = FacebookAuthProvider.credentialFromResult(result);
       const accessToken = credential.accessToken;
-      // alert('you have signed in through facebook ' + result.user.email)
+      alert('you have signed in through facebook ' + result.user.email)
       return user;
   
     })
@@ -99,5 +100,36 @@ export async function signInWithFacebookPopUp() {
   
       // ...
     });
+
+}
+
+// SignIn with github
+const githubProvider = new GithubAuthProvider();
+
+export async function signInWithGithubPopUp() {
+  signInWithPopup(auth, githubProvider)
+  .then((result) => {
+    const credential = GithubAuthProvider.credentialFromResult(result);
+    const token = credential.accessToken;
+
+    const user = result.user; 
+    alert('you have signed in through github ' + result.user.email)
+
+    return user;
+
+    // ...
+  }).catch((error) => {
+    // Handle Errors here.
+    const errorCode = error.code;
+    const errorMessage = error.message;
+
+    const email = error.customData.email;
+
+    const credential = GithubAuthProvider.credentialFromError(error);
+
+    email ? alert(`${email} already is use or signedIn`) : alert(errorMessage);
+
+    // ...
+  });
 
 }

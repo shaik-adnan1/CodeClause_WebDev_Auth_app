@@ -2,6 +2,7 @@ import {
   createUserWithEmailAndPass,
   signInWithGooglePopup,
   signInWithFacebookPopUp,
+  signInWithGithubPopUp,
 } from "./utils.js";
 
 const signUpButton = document.getElementById("signUp_btn");
@@ -14,6 +15,7 @@ const signIn_email = document.getElementById("signIn_email");
 const signIn_password = document.getElementById("signIn_password");
 const signIn_googleBtn = document.getElementById("signIn_google");
 const signIn_facebookBtn = document.getElementById("signIn_facebook");
+const signIn_githubBtn = document.getElementById("signIn_github");
 
 // SignUp handlers
 
@@ -32,13 +34,14 @@ signInButton.addEventListener("click", e => {
 signIn_googleBtn.addEventListener("click", async e => {
   e.preventDefault();
   const userDetails = await signInWithGooglePopup();
-  console.log(userDetails);
 });
 
 signIn_facebookBtn.addEventListener("click", async e => {
   e.preventDefault();
   const userDetails = await signInWithFacebookPopUp();
-  console.log(userDetails);
 });
 
-// Handler.js
+signIn_githubBtn.addEventListener("click", async e => {
+  e.preventDefault();
+  const userDetails = await signInWithGithubPopUp();
+});
